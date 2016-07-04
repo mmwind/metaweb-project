@@ -1,0 +1,75 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mails{% endblock %}
+
+{% block header %}
+{% endblock %}
+	
+{% block javascript %}
+    {{ parent() }}
+    <script>
+  $(document).ready(function() {
+      
+    $( "#messageResult" ).popover( {content:"Info", delay: { show: 500, hide: 100 }} );  
+    
+    
+    $( "form" ).on( "submit", function( event ) {
+      event.preventDefault();
+      var $form = $(event.target);
+      $( "#messageResult" ).popover('show');
+      console.log( $form.serialize() );
+            $.ajax({
+                url: $form.attr('action'),
+                type: 'POST',
+                data: $form.serialize(),
+                success: function(result) {
+                    $("#messageResult").html('<div class="panel panel-success">Сообщение успешно отправлено</div>');
+                    console.log(result);
+                },
+                error: function(){
+                    $("#messageResult").html('<div class="panel panel-danger">Сообщение не отправлено</div>');
+                    console.log('ERROR');
+                }
+            });
+            
+    });
+  });
+    </script>
+{% endblock %}
+
+{% block content %}
+{% set category = controller.getMailCategory() %}
+
+<ul class="nav nav-tabs">
+  <!-- class="active" -->
+  <li role="presentation" {% if category == 4 %}class="active"{% endif %}><a href="mails.php?p=4">Все</a></li>
+  <li role="presentation" {% if category == 1 %}class="active"{% endif %}><a href="mails.php?p=1">Входящие</a></li>
+  <li role="presentation" {% if category == 2 %}class="active"{% endif %}><a href="mails.php?p=2">Исходящие</a></li>
+  <li role="presentation" {% if category == 3 %}class="active"{% endif %}><a href="mails.php?p=3">Написать</a></li>
+</ul>
+    
+{% set user = engine.getUser() %}
+{% for i in mails %}
+    {% include 'Inc/message.html.twig' with {'mail': i } %}
+{% endfor %}
+{% set liveUsers = engine.getLiveUsers() %} 
+
+
+
+{% if category == 3 %}
+    <form action="mailAjax.php">
+        <select class="form-control" name="reciever">
+
+            {% for u in liveUsers %}
+            {% if u.getUid() != user.getUid() %}    
+                <option value="{{ u.getUid() }}">{{ u.firstname }} {{ u.lastname }}</option>
+            {% endif %}
+            {% endfor %}
+        </select>
+        <textarea class="form-control" name="text"></textarea>
+        <button type="submit" class="btn btn-primary btn-lg btn-block">Отправить</button>
+    </form>
+    <div class="form-control" id="messageResult"></div>
+{% endif %}
+
+{% endblock %}

@@ -1,0 +1,2 @@
+composer.bat update
+pause

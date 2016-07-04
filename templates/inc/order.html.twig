@@ -1,0 +1,12 @@
+{% if order.getStatus() == 1 %}
+    {% set panelStatus = 'panel-success' %}
+{% else %}
+    {% set panelStatus = 'panel-danger' %}  
+{% endif %}
+
+<div class="panel {{ panelStatus }}">
+  <div class="panel-heading">{{ order.sender.firstname }} {{ order.sender.lastname }} <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span> {{ order.reciever.firstname }} {{ order.reciever.lastname }}</div>
+  <div class="panel-body">
+    {{ order.amount }} {{ order.currency }}
+  </div>
+</div>

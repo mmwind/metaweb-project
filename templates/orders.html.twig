@@ -1,0 +1,79 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Orders{% endblock %}
+
+{% block header %}
+{% endblock %}
+	
+{% block javascript %}
+    {{ parent() }}
+    <script>
+  $(document).ready(function() {
+      
+    $( "#messageResult" ).popover( {content:"Info", delay: { show: 500, hide: 100 }} );  
+    
+    
+    $( "form" ).on( "submit", function( event ) {
+      event.preventDefault();
+      var $form = $(event.target);
+      $( "#messageResult" ).popover('show');
+      console.log( $form.serialize() );
+            $.ajax({
+                url: $form.attr('action'),
+                type: 'POST',
+                data: $form.serialize(),
+                success: function(result) {
+                    $("#messageResult").html('<div class="panel panel-success">Перевод успешно отправлен</div>');
+                    console.log(result);
+                },
+                error: function(){
+                    $("#messageResult").html('<div class="panel panel-danger">Перевод не отправлен</div>');
+                    console.log('ERROR');
+                }
+            });
+            
+    });
+  });
+    </script>
+{% endblock %}
+
+{% block content %}
+{% set category = controller.getOrdersCategory() %}
+
+<ul class="nav nav-tabs">
+  <!-- class="active" -->
+  <li role="presentation" {% if category == 0 %}class="active"{% endif %}><a href="orders.php?p=0">Ваши переводы</a></li>
+  <li role="presentation" {% if category == 1 %}class="active"{% endif %}><a href="orders.php?p=1">Новый перевод</a></li>
+</ul>
+    
+{# % if category == 1 % #}
+    <form action="orderAjax.php">
+        <div class="input-group">
+            <span class="input-group-addon">@</span>
+            <select class="form-control" name="reciever">
+
+                {% for u in liveUsers %}
+                {% if u.getUid() != user.getUid() %}    
+                    <option value="{{ u.getUid() }}">{{ u.firstname }} {{ u.lastname }}</option>
+                {% endif %}
+                {% endfor %}
+            </select>
+        </div>
+          <div class="input-group">
+            <span class="input-group-addon">$</span>
+            <input name="amount" type="text" class="form-control">
+            <span class="input-group-addon">.00</span>
+          </div>
+        <button type="submit" class="btn btn-primary btn-lg btn-block">Отправить</button>
+    </form>
+    <div class="form-control" id="messageResult"></div>
+{# % endif % #}
+
+{% set user = engine.getUser() %}
+
+{% for i in orders %}
+    {% include 'Inc/order.html.twig' with {'order': i } %}
+{% endfor %}
+{% set liveUsers = engine.getLiveUsers() %} 
+
+{% endblock %}

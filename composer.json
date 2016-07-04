@@ -1,0 +1,7 @@
+{
+    "require": {
+        "twig/twig": "~1.0",
+		"monolog/monolog": "1.2.*",
+		"colshrapnel/safemysql": "dev-master"
+    }
+}

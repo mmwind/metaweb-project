@@ -1,0 +1,45 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}NEWS{% endblock %}
+
+{% block header %}
+				<img src="assets/img/logo.png"><h2>META Profile</h2>
+{% endblock %}
+{% set user = engine.getUser() %}
+
+{% block content %}
+	<!-- ========== NEWS SECTION ========== -->
+	<!--section id="about" name="about"></section-->
+	<div id="f1">
+		<div class="container">
+			<div class="row">
+				<h3> Личное досье </h3>
+				<div class="col-lg-6 col-lg-offset-3">
+                                    {% set photo = user.getPhoto_url() %}
+                                    {% if photo is null %}
+                                        <img style="max-width:100%;" src="./img/nophoto.png"><br>
+                                    {% else %}
+                                        <img style="max-width:100%;" src="./img/moonbase.jpg"><br>
+                                    {% endif %}
+                                    
+                                        <b>Имя:</b> {{user.getFirstname()}} {{ user.getLastname()}}<br>
+                                        <b>Пол:</b> {{user.getSex()}}<br>
+                                        <b>Полных лет:</b> {{user.getAge()}}<br>
+                                        <b>Компания:</b> {{user.getCompany()}}<br>
+                                        <b>Должность:</b> {{user.getPosition()}}<br>
+                                        <b>Уровень допуска:</b> {{user.getAccesslevel()}}<br>
+                                        <b>Родители и родственники:</b><br>
+                                        Отец: {{user.getFather()}}<br>
+                                        Мать: {{user.getFather()}}<br>
+                                        Родственники.: {{user.getRelatives()}}<br>
+                                        <b>Собранные данные:</b><br>
+                                        <pre style="text-align: justify; word-wrap: break-word; word-break: keep-all;">
+                                         {{user.getInfo()}}
+                                        </pre>
+				</div>
+				<p class="centered"><i class="icon icon-circle"></i><i class="icon icon-circle"></i><i class="icon icon-circle"></i></p>
+			</div>
+		</div><!-- /container -->
+	</div><!-- /f -->
+
+{% endblock %}
